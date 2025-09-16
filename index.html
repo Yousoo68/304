@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>햄버거 메뉴 예제</title>
+  <style>
+    :root{
+      --bg: #0f172a;          /* 전체 배경 어두운 남색 */
+      --panel: rgba(30,41,59,0.85); /* 글래스 느낌 메뉴 패널 */
+      --accent: #38bdf8;      /* 하이라이트 색 (하늘색) */
+      --text: #f1f5f9;
+      --shadow: 0 8px 30px rgba(0,0,0,0.35);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family: "Segoe UI","Noto Sans KR",sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height:100vh;
+    }
+
+    /* 상단바 */
+    .topbar{
+      position:fixed;
+      top:0;left:0;right:0;
+      height:60px;
+      display:flex;
+      align-items:center;
+      padding:0 16px;
+      z-index:1000;
+      background: rgba(15,23,42,0.6);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+
+    /* 햄버거 버튼 */
+    .menu-btn{
+      border:0;
+      background:transparent;
+      font-size:26px;
+      line-height:1;
+      padding:10px;
+      border-radius:10px;
+      cursor:pointer;
+      color:var(--accent);
+      transition: background 0.2s;
+    }
+    .menu-btn:hover{
+      background: rgba(56,189,248,0.15);
+    }
+
+    /* 메뉴 패널 */
+    .menu-panel{
+      position:fixed;
+      top:70px;
+      left:16px;
+      width:220px;
+      background:var(--panel);
+      box-shadow:var(--shadow);
+      border-radius:12px;
+      transform-origin:top left;
+      transform:scale(0.95) translateY(-5px);
+      opacity:0;
+      pointer-events:none;
+      transition: transform 180ms ease, opacity 180ms ease;
+      padding:10px;
+      z-index:999;
+      backdrop-filter: blur(14px);
+    }
+
+    .menu-panel.open{
+      transform:scale(1) translateY(0);
+      opacity:1;
+      pointer-events:auto;
+    }
+
+    .menu-panel nav{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+
+    .menu-item{
+      display:block;
+      padding:12px 14px;
+      text-decoration:none;
+      color:var(--text);
+      border-radius:10px;
+      font-size:15px;
+      cursor:pointer;
+      transition: background 0.25s, transform 0.15s;
+    }
+    .menu-item:hover, .menu-item:focus{
+      background:rgba(56,189,248,0.18);
+      transform: translateX(4px);
+      outline:none;
+    }
+
+    main{
+      padding:100px 20px 40px;
+      max-width:900px;
+      margin:0 auto;
+    }
+    #contentArea{
+      background: rgba(30,41,59,0.6);
+      border-radius:14px;
+      padding:30px;
+      box-shadow: var(--shadow);
+      min-height:200px;
+      backdrop-filter: blur(10px);
+    }
+    #contentArea h2{
+      margin-bottom:10px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <button class="menu-btn" id="menuToggle" aria-controls="siteMenu" aria-expanded="false" aria-label="메뉴 열기">
+      ☰
+    </button>
+  </header>
+
+  <!-- 메뉴 패널 -->
+  <div class="menu-panel" id="siteMenu" role="menu" aria-hidden="true">
+    <nav>
+      <div class="menu-item" role="menuitem" data-content="home">🏠 홈</div>
+      <div class="menu-item" role="menuitem" data-content="about">🌐 서버</div>
+      <div class="menu-item" role="menuitem" data-content="projects">📥 서버 접속 방법</div>
+      <div class="menu-item" role="menuitem" data-content="contact">👥 공식 멤버</div>
+      <div class="menu-item" role="menuitem" data-content="location">📍 위치</div>
+      <div class="menu-item" role="menuitem" data-content="report">🚨 제보/문의</div>
+    </nav>
+  </div>
+
+  <main>
+    <h1>304 야생 서버 공식 홈페이지</h1>
+    <div id="contentArea">
+      <p>왼쪽 위 ☰ 버튼을 눌러 메뉴를 열고 원하는 항목을 선택하세요.</p>
+    </div>
+  </main>
+
+  <script>
+    const btn = document.getElementById('menuToggle');
+    const panel = document.getElementById('siteMenu');
+    const contentArea = document.getElementById('contentArea');
+
+    // 메뉴 내용 정의
+    const contents = {
+      home: "<h2>홈</h2><p>여기는 홈페이지 메인 화면입니다.</p>",
+      about: "<h2>서버</h2><p>이 사이트에 대한 간단한 소개글입니다.</p>",
+      projects: "<h2>서버 접속 방법</h2><p>진행한 프로젝트 목록을 볼 수 있습니다.</p>",
+      contact: "<h2>공식 멤버</h2><p>이메일이나 전화번호 등 연락처 정보가 들어갑니다.</p>",
+      location: "<h2>위치</h2><p>서버/베이스캠프 위치 정보입니다.</p>",
+      report: "<h2>제보/문의</h2><p>문의 사항이나 제보를 작성할 수 있습니다.</p>"
+    };
+
+    // 메뉴 열기/닫기
+    function setOpen(open){
+      if(open){
+        panel.classList.add('open');
+        panel.setAttribute('aria-hidden','false');
+        btn.setAttribute('aria-expanded','true');
+      } else {
+        panel.classList.remove('open');
+        panel.setAttribute('aria-hidden','true');
+        btn.setAttribute('aria-expanded','false');
+      }
+    }
+
+    btn.addEventListener('click', (e)=>{
+      e.stopPropagation();
+      const isOpen = btn.getAttribute('aria-expanded') === 'true';
+      setOpen(!isOpen);
+    });
+
+    // 메뉴 클릭 시 내용 표시
+    panel.addEventListener('click',(e)=>{
+      if(e.target.classList.contains('menu-item')){
+        const key = e.target.getAttribute('data-content');
+        contentArea.innerHTML = contents[key] || "<p>내용이 없습니다.</p>";
+        setOpen(false);
+      }
+    });
+
+    // 바깥 클릭 시 닫기
+    document.addEventListener('click',(e)=>{
+      if(!panel.contains(e.target) && e.target !== btn){
+        setOpen(false);
+      }
+    });
+  </script>
+</body>
+</html>
