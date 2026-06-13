@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>이미지 다운로드</title>
+
+<style>
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    background:#111827;
+    font-family:sans-serif;
+}
+
+.download-btn{
+    padding:16px 32px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#3b82f6,#06b6d4);
+    color:white;
+    font-size:18px;
+    font-weight:bold;
+    text-decoration:none;
+    cursor:pointer;
+    transition:.3s;
+}
+
+.download-btn:hover{
+    transform:translateY(-3px);
+}
+</style>
+
+</head>
+<body>
+
+<a href="image.jpg" download class="download-btn">
+  다운로드
+</a>
+
+</body>
+</html>
